@@ -1,6 +1,7 @@
 package ua.nure.malytska.usermanagement.db;
 
 import org.dbunit.DatabaseTestCase;
+import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import ua.nure.malytska.usermanagement.SystemUser;
@@ -10,9 +11,9 @@ import java.util.Date;
 public class HsqldbSystemUserDAOTest extends DatabaseTestCase {
 
     private HsqldbSystemUserDAO dao;
-
     private static final String FIRST_NAME = "John";
     private static final String LAST_NAME = "Doe";
+    private ConnectionFactory connectionFactory;
 
     public void testCreate() throws DatabaseException {
         SystemUser systemUser = new SystemUser();
@@ -27,7 +28,7 @@ public class HsqldbSystemUserDAOTest extends DatabaseTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        dao = new HsqldbSystemUserDAO();
+        dao = new HsqldbSystemUserDAO(connectionFactory);
     }
 
     public void tearDown() throws Exception {
@@ -36,7 +37,8 @@ public class HsqldbSystemUserDAOTest extends DatabaseTestCase {
 
     @Override
     protected IDatabaseConnection getConnection() throws Exception {
-        return null;
+        connectionFactory = new ConnectionFactoryImpl();
+        return new DatabaseConnection(connectionFactory.createConnection());
     }
 
     @Override
