@@ -1,17 +1,33 @@
 package ua.nure.malytska.usermanagement.db;
 
-import ua.nure.malytska.usermanagement.SystemUser;
+import ua.nure.malytska.usermanagement.entity.SystemUser;
 
 import java.sql.*;
 import java.util.Collection;
+import java.util.LinkedList;
 
-public class HsqldbSystemUserDAO implements DAO<SystemUser> {
+class HsqldbSystemUserDAO implements DAO<SystemUser> {
 
     private ConnectionFactory connectionFactory;
-    private static final String INSERT_QUERY = "INSERT INTO system_user (first_name, last_name. date_of_birth) VALUES  (?,?,?)";
+    private static final String INSERT_QUERY = "INSERT INTO users (firstname, lastname, dateofbirth) VALUES (?, ?, ?)";
     private static final String CALL_IDENTITY = "call IDENTITY()";
+    private static final String SELECT_ALL_QUERY = "SELECT * FROM users";
+    private static final String UPDATE_QUERY = "UPDATE USERS SET FIRSTNAME = ?, LASTNAME = ?, DATEOFBIRTH = ? WHERE ID = ?";
+    private static final String DELETE_QUERY = "DELETE FROM USERS WHERE ID= ?";
+    private static final String FIND_QUERY = "SELECT * FROM users WHERE id = ?";
+
+    public HsqldbSystemUserDAO() {
+    }
 
     public HsqldbSystemUserDAO(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
@@ -19,48 +35,125 @@ public class HsqldbSystemUserDAO implements DAO<SystemUser> {
     public SystemUser create(SystemUser systemUser) throws DatabaseException {
         try {
             Connection connection = connectionFactory.createConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY);
-            preparedStatement.setString(1, systemUser.getFirstName());
-            preparedStatement.setString(2, systemUser.getLastName());
-            preparedStatement.setDate(3, new Date(systemUser.getDateOfBirth().getTime()));
-            int numberOfRows = preparedStatement.executeUpdate();
-            if(numberOfRows!=1) {
-                throw new DatabaseException("Number of rows: " + numberOfRows);
+            PreparedStatement statement = connection
+                    .prepareStatement(INSERT_QUERY);
+            statement.setString(1, systemUser.getFirstName());
+            statement.setString(2, systemUser.getLastName());
+            statement.setDate(3,
+                    new Date(systemUser.getDateOfBirth().getTime()));
+            int n = statement.executeUpdate();
+            if (n != 1) {
+                throw new DatabaseException(
+                        "Number of the inserted rows: " + n);
             }
-            CallableStatement callableStatement = connection.prepareCall(CALL_IDENTITY);
-            ResultSet keys =  callableStatement.executeQuery();
-            if(keys.next()){
+            CallableStatement callableStatement = connection
+                    .prepareCall(CALL_IDENTITY);
+            ResultSet keys = callableStatement.executeQuery();
+            if (keys.next()) {
                 systemUser.setId(keys.getLong(1));
             }
             keys.close();
             callableStatement.close();
-            preparedStatement.close();
+            statement.close();
             connection.close();
             return systemUser;
+        } catch (DatabaseException e) {
+            throw e;
         } catch (SQLException e) {
             throw new DatabaseException(e);
-        } catch (DatabaseException e){
-            throw e;
         }
     }
 
     @Override
     public void update(SystemUser systemUser) throws DatabaseException {
+        try {
+            Connection connection = connectionFactory.createConnection();
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement(UPDATE_QUERY);
+            preparedStatement.setString(1, systemUser.getFirstName());
+            preparedStatement.setString(2, systemUser.getLastName());
+            preparedStatement.setDate(3,
+                    new Date(systemUser.getDateOfBirth().getTime()));
+            preparedStatement.setLong(4, systemUser.getId());
 
+            int changedRows = preparedStatement.executeUpdate();
+
+            if (changedRows != 1) {
+                throw new DatabaseException(
+                        "Number of inserted rows: " + changedRows);
+            }
+
+            connection.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public void delete(SystemUser systemUser) throws DatabaseException {
-
+        Connection connection = connectionFactory.createConnection();
+        try {
+            PreparedStatement statement = connection
+                    .prepareStatement(DELETE_QUERY);
+            statement.setLong(1, systemUser.getId());
+            int removedRows = statement.executeUpdate();
+            if (removedRows != 1) {
+                throw new DatabaseException(
+                        "Number of removed rows: " + removedRows);
+            }
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public SystemUser find(Long id) throws DatabaseException {
-        return null;
+        Connection connection = connectionFactory.createConnection();
+        SystemUser user = new SystemUser();
+        try {
+            PreparedStatement statement = connection
+                    .prepareStatement(FIND_QUERY);
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                user = new SystemUser();
+                user.setId(resultSet.getLong(1));
+                user.setFirstName(resultSet.getString(2));
+                user.setLastName(resultSet.getString(3));
+                user.setDateOfBirth(resultSet.getDate(4));
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        return user;
     }
 
     @Override
     public Collection<SystemUser> findAll() throws DatabaseException {
-        return null;
+        Collection<SystemUser> systemUsers = new LinkedList<>();
+        try {
+            Connection connection = connectionFactory.createConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_QUERY);
+            while (resultSet.next()) {
+                SystemUser user = new SystemUser();
+                user.setId(resultSet.getLong(1));
+                user.setFirstName(resultSet.getString(2));
+                user.setLastName(resultSet.getString(3));
+                user.setDateOfBirth(resultSet.getDate(4));
+                systemUsers.add(user);
+            }
+        } catch (DatabaseException e) {
+            throw e;
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        return systemUsers;
     }
 }

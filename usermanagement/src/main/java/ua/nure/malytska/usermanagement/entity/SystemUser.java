@@ -1,4 +1,4 @@
-package ua.nure.malytska.usermanagement;
+package ua.nure.malytska.usermanagement.entity;
 
 import java.util.Calendar;
 import java.util.Date;

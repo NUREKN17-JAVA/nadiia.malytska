@@ -3,12 +3,29 @@ package ua.nure.malytska.usermanagement.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConnectionFactoryImpl implements ConnectionFactory {
-    private String driver = "org.hsqldb.jdbcDriver";
-    private String url = "jdbc:hsqldb:file:db/usermanagement";
-    private String user = "sa";
-    private String password = "";
+
+    private String driver;
+    private String url;
+    private String user;
+    private String password;
+
+    ConnectionFactoryImpl(String user, String password, String url,
+            String driver) {
+        this.user = user;
+        this.password = password;
+        this.url = url;
+        this.driver = driver;
+    }
+
+    public ConnectionFactoryImpl(Properties properties) {
+        user = properties.getProperty("connection.user");
+        password = properties.getProperty("connection.password");
+        url = properties.getProperty("connection.url");
+        driver = properties.getProperty("connection.driver");
+    }
 
     @Override
     public Connection createConnection() throws DatabaseException {
@@ -22,5 +39,6 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+
     }
 }

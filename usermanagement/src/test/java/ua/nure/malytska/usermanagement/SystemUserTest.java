@@ -1,6 +1,7 @@
 package ua.nure.malytska.usermanagement;
 
 import junit.framework.TestCase;
+import ua.nure.malytska.usermanagement.entity.SystemUser;
 
 import java.util.Calendar;
 
