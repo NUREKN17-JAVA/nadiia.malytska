@@ -28,7 +28,7 @@ public class HsqldbSystemUserDAOTest extends DatabaseTestCase {
     private static final String UPDATE_LNAME = "Vasuk";
     private static final Date UPDATE_DATE = new Date(1999 - 20 - 10);
 
-    private static final long TEST_ID = 3L;
+    private static final long TEST_ID = 5L;
     private ConnectionFactory connectionFactory;
 
     protected void setUp() throws Exception {
@@ -72,7 +72,7 @@ public class HsqldbSystemUserDAOTest extends DatabaseTestCase {
 
         SystemUser userToCheck = dao.create(user);
         assertEquals(DELETE_TEST_NAME, userToCheck.getFirstName());
-        assertEquals(DELETE_TEST_LASTNAME, userToCheck.getLastName());
+            assertEquals(DELETE_TEST_LASTNAME, userToCheck.getLastName());
         assertEquals(user.getDateOfBirth(), userToCheck.getDateOfBirth());
 
         userToCheck.setFirstName(UPDATE_NAME);

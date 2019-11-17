@@ -9,12 +9,12 @@ import java.util.LinkedList;
 class HsqldbSystemUserDAO implements DAO<SystemUser> {
 
     private ConnectionFactory connectionFactory;
-    private static final String INSERT_QUERY = "INSERT INTO users (firstname, lastname, dateofbirth) VALUES (?, ?, ?)";
+    private static final String INSERT_QUERY = "INSERT INTO USERS (FIRSTNAME, LASTNAME, DATEOFBIRTH) VALUES (?, ?, ?)";
     private static final String CALL_IDENTITY = "call IDENTITY()";
-    private static final String SELECT_ALL_QUERY = "SELECT * FROM users";
+    private static final String SELECT_ALL_QUERY = "SELECT * FROM USERS";
     private static final String UPDATE_QUERY = "UPDATE USERS SET FIRSTNAME = ?, LASTNAME = ?, DATEOFBIRTH = ? WHERE ID = ?";
     private static final String DELETE_QUERY = "DELETE FROM USERS WHERE ID= ?";
-    private static final String FIND_QUERY = "SELECT * FROM users WHERE id = ?";
+    private static final String FIND_QUERY = "SELECT * FROM USERS WHERE ID = ?";
 
     public HsqldbSystemUserDAO() {
     }
