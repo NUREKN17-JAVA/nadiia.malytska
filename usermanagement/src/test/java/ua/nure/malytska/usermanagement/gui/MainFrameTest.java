@@ -9,6 +9,7 @@ import junit.extensions.jfcunit.eventdata.MouseEventData;
 import junit.extensions.jfcunit.eventdata.StringEventData;
 import junit.extensions.jfcunit.finder.DialogFinder;
 import junit.extensions.jfcunit.finder.NamedComponentFinder;
+import ua.nure.malytska.usermanagement.db.DAOFactory;
 import ua.nure.malytska.usermanagement.entity.SystemUser;
 import ua.nure.malytska.usermanagement.util.Messages;
 
@@ -49,8 +50,8 @@ public class MainFrameTest extends JFCTestCase {
             Properties properties = new Properties();
             properties
                     .setProperty("dao.Factory", MockDaoFactory.class.getName());
-            DaoFactory.init(properties);
-            mockUserDao = ((MockDaoFactory) DaoFactory.getInstance())
+            DAOFactory.init(properties);
+            mockUserDao = ((MockDaoFactory) DAOFactory.getInstance())
                     .getMockUserDao();
             SystemUser expectedUser = new SystemUser(1000L, "George",
                     "Bush", new Date());
