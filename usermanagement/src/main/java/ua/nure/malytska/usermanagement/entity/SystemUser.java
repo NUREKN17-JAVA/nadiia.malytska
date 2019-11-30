@@ -11,6 +11,24 @@ public class SystemUser {
     private String lastName;
     private Date dateOfBirth;
 
+    public SystemUser() {
+    }
+
+    public SystemUser(Long id, String firstName, String lastName,
+            Date dateOfBirth) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public SystemUser(String firstName, String lastName,
+            Date dateOfBirth) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public Long getId() {
         return id;
     }
