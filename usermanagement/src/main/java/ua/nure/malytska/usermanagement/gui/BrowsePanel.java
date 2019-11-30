@@ -1,11 +1,17 @@
 package ua.nure.malytska.usermanagement.gui;
 
+import ua.nure.malytska.usermanagement.db.DatabaseException;
+import ua.nure.malytska.usermanagement.entity.SystemUser;
+import ua.nure.malytska.usermanagement.util.Messages;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class BrowsePanel extends JPanel implements ActionListener {
+    private static final long serialVersionUID = -4548910292462347062L;
 
     private static final String BROWSE_PANEL_COMPONENT_NAME = "browsePanel";
     private static final String USER_TABLE_COMPONENT_NAME = "userTable";
@@ -41,6 +47,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
 
     private void initialize() {
         this.setName(BROWSE_PANEL_COMPONENT_NAME);
+        this.setLayout(new BorderLayout());
         this.add(getTablePanel(), BorderLayout.CENTER);
         this.add(getButtonsPanel(), BorderLayout.SOUTH);
     }
@@ -55,7 +62,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JButton getAddButton() {
         if (addButton == null) {
             addButton = new JButton();
-            addButton.setText("Добавить");
+            addButton.setText(Messages.getString("BrowsePanel.add"));
             addButton.setName(ADD_BUTTON_COMPONENT_NAME);
             addButton.setActionCommand(ADD_COMMAND);
             addButton.addActionListener(this);
@@ -77,7 +84,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JButton getEditButton() {
         if (editButton == null) {
             editButton = new JButton();
-            editButton.setText("Изменить");
+            editButton.setText(Messages.getString("BrowsePanel.edit"));
             editButton.setName(EDIT_BUTTON_COMPONENT_NAME);
             editButton.setActionCommand(EDIT_COMMAND);
             editButton.addActionListener(this);
@@ -88,7 +95,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JButton getDeleteButton() {
         if (deleteButton == null) {
             deleteButton = new JButton();
-            deleteButton.setText("Удалить");
+            deleteButton.setText(Messages.getString("BrowsePanel.delete"));
             deleteButton.setName(DELETE_BUTTON_COMPONENT_NAME);
             deleteButton.setActionCommand(DELETE_COMMAND);
             deleteButton.addActionListener(this);
@@ -99,7 +106,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JButton getDetailsButton() {
         if (detailsButton == null) {
             detailsButton = new JButton();
-            detailsButton.setText("Подробнее");
+            detailsButton.setText(Messages.getString("BrowsePanel.details"));
             detailsButton.setName(DETAILS_BUTTON_COMPONENT_NAME);
             detailsButton.setActionCommand(DETAILS_COMMAND);
             detailsButton.addActionListener(this);
@@ -115,8 +122,51 @@ public class BrowsePanel extends JPanel implements ActionListener {
         return userTable;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent e) {
+        String actionCommand = e.getActionCommand();
+        if ("add".equalsIgnoreCase(actionCommand)) {
+            this.setVisible(false);
+            parent.showAddPanel();
+        } else if ("edit".equalsIgnoreCase(actionCommand)) {
+            int selectedRow = userTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Select a user, please",
+                        "Edit user", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            SystemUser user = ((UserTableModel) userTable.getModel())
+                    .getUser(selectedRow);
+            this.setVisible(false);
+            parent.showEditPanel(user);
+        } else if ("delete".equalsIgnoreCase(actionCommand)) { //$NON-NLS-1$
+            int selectedRow = userTable.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Select a user, please",
+                        "Edit user", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            try {
+                parent.getUserDao().delete(((UserTableModel) userTable.getModel())
+                                .getUser(selectedRow));
+            } catch (DatabaseException e1) {
+                JOptionPane.showMessageDialog(this, e1.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            initTable();
+            return;
+        }
+    }
 
+    public void initTable() {
+        UserTableModel model;
+        try {
+            model = new UserTableModel(parent.getUserDao().findAll());
+        } catch (DatabaseException e) {
+            model = new UserTableModel(new ArrayList<>());
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+        }
+        getUserTable().setModel(model);
     }
 }
