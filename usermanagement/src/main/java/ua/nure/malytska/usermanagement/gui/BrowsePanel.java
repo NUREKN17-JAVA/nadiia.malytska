@@ -132,7 +132,6 @@ public class BrowsePanel extends JPanel implements ActionListener {
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(this, "Select a user, please",
                         "Edit user", JOptionPane.INFORMATION_MESSAGE);
-                return;
             }
             SystemUser user = ((UserTableModel) userTable.getModel())
                     .getUser(selectedRow);
@@ -143,17 +142,16 @@ public class BrowsePanel extends JPanel implements ActionListener {
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(this, "Select a user, please",
                         "Edit user", JOptionPane.INFORMATION_MESSAGE);
-                return;
             }
             try {
-                parent.getUserDao().delete(((UserTableModel) userTable.getModel())
+                parent.getUserDao()
+                        .delete(((UserTableModel) userTable.getModel())
                                 .getUser(selectedRow));
             } catch (DatabaseException e1) {
                 JOptionPane.showMessageDialog(this, e1.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
             initTable();
-            return;
         }
     }
 

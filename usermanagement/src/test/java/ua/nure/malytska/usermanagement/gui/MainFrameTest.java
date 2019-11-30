@@ -10,6 +10,7 @@ import junit.extensions.jfcunit.eventdata.StringEventData;
 import junit.extensions.jfcunit.finder.DialogFinder;
 import junit.extensions.jfcunit.finder.NamedComponentFinder;
 import ua.nure.malytska.usermanagement.db.DAOFactory;
+import ua.nure.malytska.usermanagement.db.MockDAOFactory;
 import ua.nure.malytska.usermanagement.entity.SystemUser;
 import ua.nure.malytska.usermanagement.util.Messages;
 
@@ -49,12 +50,12 @@ public class MainFrameTest extends JFCTestCase {
         try {
             Properties properties = new Properties();
             properties
-                    .setProperty("dao.Factory", MockDaoFactory.class.getName());
+                    .setProperty("dao.Factory", MockDAOFactory.class.getName());
             DAOFactory.init(properties);
-            mockUserDao = ((MockDaoFactory) DAOFactory.getInstance())
+            mockUserDao = ((MockDAOFactory) DAOFactory.getInstance())
                     .getMockUserDao();
-            SystemUser expectedUser = new SystemUser(1000L, "George",
-                    "Bush", new Date());
+            SystemUser expectedUser = new SystemUser(1000L, "George", "Bush",
+                    new Date());
             users = (ArrayList<SystemUser>) Collections
                     .singletonList(expectedUser);
             mockUserDao.expectAndReturn("findAll", users);

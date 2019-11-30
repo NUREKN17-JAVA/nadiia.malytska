@@ -42,7 +42,6 @@ public class AddPanel extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout());
         this.add(getFieldPanel(), BorderLayout.NORTH);
         this.add(getButtonPanel(), BorderLayout.SOUTH);
-
     }
 
     private JPanel getButtonPanel() {

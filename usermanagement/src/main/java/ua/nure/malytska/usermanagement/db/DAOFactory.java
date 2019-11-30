@@ -39,9 +39,9 @@ public abstract class DAOFactory {
         return instance;
     }
 
-    public void init(
+    public static void init(
             Properties properties) { // позволяет заменить свойства, чтобы подложить mock-объект
-        this.properties = properties;
+        DAOFactory.properties = properties;
         instance = null; //пересоздаём фабрику уже с подлженными свойствами новыми
     }
 

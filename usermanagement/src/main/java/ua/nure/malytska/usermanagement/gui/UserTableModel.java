@@ -57,9 +57,7 @@ public class UserTableModel extends AbstractTableModel {
         return users.get(index);
     }
 
-    /**
-     * @param users2
-     */
+
     public void addUsers(Collection<SystemUser> users) {
         this.users.addAll(users);
 
