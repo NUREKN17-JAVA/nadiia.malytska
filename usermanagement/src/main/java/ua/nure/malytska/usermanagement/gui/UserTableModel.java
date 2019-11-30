@@ -20,7 +20,7 @@ public class UserTableModel extends AbstractTableModel {
             String.class };
     private List<SystemUser> users = null;
 
-    public UserTableModel(Collection<SystemUser> users) {
+    public UserTableModel(ArrayList<SystemUser> users) {
         this.users = new ArrayList<>(users);
     }
 

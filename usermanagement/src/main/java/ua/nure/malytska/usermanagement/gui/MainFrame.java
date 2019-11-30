@@ -1,6 +1,7 @@
 package ua.nure.malytska.usermanagement.gui;
 
 import ua.nure.malytska.usermanagement.db.DAO;
+import ua.nure.malytska.usermanagement.db.DAOFactory;
 import ua.nure.malytska.usermanagement.entity.SystemUser;
 import ua.nure.malytska.usermanagement.util.Messages;
 
@@ -14,11 +15,13 @@ public class MainFrame extends JFrame {
     private static final int WIDTH = 800;
     private JPanel contentPanel;
     private BrowsePanel browsePanel;
+    private AddPanel addPanel;
     private DAO<SystemUser> dao;
+    private EditPanel editPanel;
 
     public MainFrame() {
         super();
-        dao = DaoFactory.getInstance().getUserDao();
+        dao = DAOFactory.getInstance().getUserDao();
         initialize();
     }
 
@@ -51,9 +54,6 @@ public class MainFrame extends JFrame {
         return browsePanel;
     }
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         MainFrame frame = new MainFrame();
         frame.setVisible(true);
@@ -85,5 +85,11 @@ public class MainFrame extends JFrame {
             editPanel = new EditPanel(this);
         }
         return editPanel;
+    }
+
+    public void showEditPanel(SystemUser user) {
+        getEditPanel().setUser(user);
+        showPanel(getEditPanel());
+
     }
 }

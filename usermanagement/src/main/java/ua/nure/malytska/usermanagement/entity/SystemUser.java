@@ -11,6 +11,9 @@ public class SystemUser {
     private String lastName;
     private Date dateOfBirth;
 
+    public SystemUser() {
+    }
+
     public SystemUser(Long id, String firstName, String lastName,
             Date dateOfBirth) {
         this.id = id;
