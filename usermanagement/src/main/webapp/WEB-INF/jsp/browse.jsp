@@ -35,7 +35,7 @@
         </tr>
     </c:forEach>
 </table>
-<spring:url value="/users/add.html" var="addUrl" />
+<spring:url value="/users/add.jsp" var="addUrl" />
 <a href="${addUrl}">Add user</a>
 
 <c:if test="${requestScope.error != null}">

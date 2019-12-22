@@ -9,7 +9,7 @@ import ua.nure.malytska.usermanagement.db.MockDAOFactory;
 
 import java.util.Properties;
 
-public abstract class MockServletTestCase extends BasicServletTestCaseAdapter {
+    public abstract class MockServletTestCase extends BasicServletTestCaseAdapter {
 
     private Mock mockUserDao;
 
