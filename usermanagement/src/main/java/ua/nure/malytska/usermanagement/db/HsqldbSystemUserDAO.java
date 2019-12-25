@@ -15,6 +15,7 @@ class HsqldbSystemUserDAO implements DAO<SystemUser> {
     private static final String UPDATE_QUERY = "UPDATE USERS SET FIRSTNAME = ?, LASTNAME = ?, DATEOFBIRTH = ? WHERE ID = ?";
     private static final String DELETE_QUERY = "DELETE FROM USERS WHERE ID= ?";
     private static final String FIND_QUERY = "SELECT * FROM USERS WHERE ID = ?";
+    private static final String SELECT_BY_NAME = "SELECT * FROM users AS u WHERE u.firstname=? AND u.lastname=?";
 
     public HsqldbSystemUserDAO() {
     }
@@ -132,6 +133,31 @@ class HsqldbSystemUserDAO implements DAO<SystemUser> {
             throw new DatabaseException(e);
         }
         return user;
+    }
+
+    @Override
+    public Collection<SystemUser> find(String firstName, String lastName)
+            throws DatabaseException {
+        Collection result = new LinkedList();
+
+        try {
+            Connection connection = connectionFactory.createConnection();
+            PreparedStatement statement = connection.prepareStatement(SELECT_BY_NAME);
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                SystemUser systemUser = new SystemUser();
+                systemUser.setId(resultSet.getLong(1));
+                systemUser.setFirstName(resultSet.getString(2));
+                systemUser.setLastName(resultSet.getString(3));
+                systemUser.setDateOfBirth(resultSet.getDate(4));
+                result.add(systemUser);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        return result;
     }
 
     @Override
